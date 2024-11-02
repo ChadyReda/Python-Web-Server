@@ -35,3 +35,8 @@ def add_user(name, password, sport):
 def get_users():
     query = "SELECT * FROM users;"
     return users(query, fetch=True)
+
+def delete_user(id):
+    query = "DELETE FROM users WHERE id = ?"
+    users(query, params=(id), fetch=False)
+    print(f"User with id <{id}> is deleted")

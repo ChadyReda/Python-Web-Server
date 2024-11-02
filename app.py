@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request
-from db import db_init, add_user, get_users
+from flask import Flask, render_template, request, redirect
+from db import db_init, add_user, get_users, delete_user
 
 app = Flask(__name__)
 
@@ -34,10 +34,19 @@ def register ():
     
     # store the user data
     add_user(name, password, sport)
-    return render_template("success.html", message="User Registered")
+    return redirect("/")
 
 
 @app.route("/users")
 def users_list():
     users = get_users()
     return render_template("user_list.html", users=users)
+
+
+@app.route("/deregister", methods=["POST"])
+def deregister():
+    id = request.form.get("id")
+    if not id:
+        return render_template("error.html", message="No id is provided")
+    delete_user(id)
+    return redirect("/register")

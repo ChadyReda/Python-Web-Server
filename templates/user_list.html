@@ -1,9 +1,28 @@
 {% extends "layout.html" %}
 
 {% block body %}
-
-    {% for user in users %}
-        <li>{{user[1]}} : {{user[3]}}</li>
-    {% endfor %}
-
+    <h1>Registrants</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Sport</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user[1] }}</td>
+                    <td>{{ user[3] }}</td>
+                    <td>
+                        <form action="/deregister" method="post">
+                            <input type="hidden" name="id" value="{{user[0]}}">
+                            <input type="submit" name="id" value="deregister">
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
