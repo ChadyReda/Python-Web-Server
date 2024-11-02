@@ -11,7 +11,7 @@ def db_init():
 
 
 
-def users(query, params=(), fetch=False):
+def users(query, params=(), fetch=False, Unique=False):
     with sqlite3.connect("users.db") as connection:
         cursor = connection.cursor()
         result = cursor.execute(query, params)
@@ -20,6 +20,10 @@ def users(query, params=(), fetch=False):
             cursor.close()
             return None
         else:
+            if Unique:
+                data = result.fetchone()
+                cursor.close()
+                return data
             data = result.fetchall()
             cursor.close()
             return data
@@ -35,6 +39,10 @@ def add_user(name, password, sport):
 def get_users():
     query = "SELECT * FROM users;"
     return users(query, fetch=True)
+
+def get_user(name):
+    query = "SELECT * FROM users WHERE name = ?"
+    return users(query, params=(name,), fetch=True, Unique=True)
 
 def delete_user(id):
     query = "DELETE FROM users WHERE id = ?"
