@@ -10,10 +10,28 @@ def db_init():
         print("<db init>")
 
 
-# function to add a user
-def add_user(query, params):
+
+def users(query, params=(), fetch=False):
     with sqlite3.connect("users.db") as connection:
         cursor = connection.cursor()
         result = cursor.execute(query, params)
-        cursor.close()
-        return result 
+        if not fetch:
+            connection.commit()  # Ensure changes are saved for INSERT, UPDATE, DELETE queries
+            cursor.close()
+            return None
+        else:
+            data = result.fetchall()
+            cursor.close()
+            return data
+        
+        
+
+def add_user(name, password, sport):
+    query = "INSERT INTO users (name, password, sport) VALUES (?, ?, ?)"
+    params = (name, password, sport)
+    users(query, params, fetch=False)
+    print(f"User '{name}' added.")
+
+def get_users():
+    query = "SELECT * FROM users;"
+    return users(query, fetch=True)

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from db import db_init, add_user
+from db import db_init, add_user, get_users
 
 app = Flask(__name__)
 
@@ -33,14 +33,11 @@ def register ():
         return render_template("error.html", error="All fields are required")
     
     # store the user data
-    query = "INSERT INTO users(name, password, sport) VALUES (?, ?, ?)"
-    add_user(query, (name, password, sport))
-    
+    add_user(name, password, sport)
     return render_template("success.html", message="User Registered")
-
-
 
 
 @app.route("/users")
 def users_list():
-    return render_template("user_list.html")
+    users = get_users()
+    return render_template("user_list.html", users=users)
