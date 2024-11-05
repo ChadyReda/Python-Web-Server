@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 from db import db_init, add_user, get_users, get_user, delete_user
+from middlware import auth_middlware
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
@@ -16,7 +17,9 @@ SPORTS = [
     "volleyball"
 ]
 
+
 @app.route("/")
+@auth_middlware
 def index ():
     return render_template("index.html")
 
@@ -62,6 +65,7 @@ def login():
         # store the session
         print("storing the session")
         session["name"] = user[1]
+        session["id"] = user[0]
         return redirect("/")
     else:
         return render_template("login.html")
@@ -74,7 +78,7 @@ def users_list():
 
 @app.route("/logout")
 def logout():
-    session["name"] = None
+    session.clear()
     return redirect("/login")
 
 @app.route("/deregister", methods=["POST"])
@@ -82,5 +86,10 @@ def deregister():
     id = request.form.get("id")
     if not id:
         return render_template("error.html", error="Id not provided correctly")
+    session.clear()
     delete_user(id)
     return redirect("/register")
+
+
+if __name__ == "__main__":
+    app.run()
